@@ -1,5 +1,5 @@
 extern crate proc_macro;
-use proc_macro::{TokenStream, TokenTree as Tt, Punct, Group, Spacing};
+use proc_macro::{TokenStream, TokenTree as Tt, Punct, Group, Spacing, Delimiter};
 
 #[proc_macro]
 pub fn postfix_macros(stream :TokenStream) -> TokenStream {
@@ -34,16 +34,67 @@ impl Visitor {
 						// Remove the . before the macro
 						res.pop().unwrap();
 
-						// The expression to pop
-						// TODO support entire chains
-						let expr = res.pop().unwrap();
+						// Walk the entire chain of tt's that
+						// form an expression.
+						let mut res_iter = res.iter().rev();
+						let mut expr_len = 0;
+						let mut last_was_punctuation = true;
+						for tt in res_iter {
+							let mut is_punctuation = false;
+							//println!("    {} {}", tt, last_was_punctuation);
+							match tt {
+								Tt::Group(_group) => {
+									is_punctuation = true;
+								},
+								Tt::Ident(_id) => {
+									if !last_was_punctuation {
+										// two idents following another... must be `if <something>.foo!()`
+										// or something like it
+										break;
+									}
+								},
+								Tt::Punct(p) => {
+									is_punctuation = true;
+									match p.as_char() {
+										// No expression termination
+										'.' if p.spacing() == Spacing::Alone => (),
+										'?' | '!' => (),
+										// These all terminate expressions
+										'.' | '&' if p.spacing() == Spacing::Joint => break,
+										'&' if p.spacing() == Spacing::Joint => (),
+										',' | ';' | '+' | '/' | '=' | '<' | '>' | '|' => break,
+										// TODO figure out what to do about & and * and - as they can be prepended to expressions.
+										// For safety reasons (to not accidentially change meaning of code),
+										// we error here
+										'&' | '*' | '-' => panic!("We currently don't know whether an expression ends \
+											in punctuation {} and error about it to not change meaning", p.as_char()),
+										c => panic!("Encountered unsupported punctuation {}", c),
+									}
+								},
+								Tt::Literal(_lit) => {
+								},
+							}
+							expr_len += 1;
+							last_was_punctuation = is_punctuation;
+						}
+						if expr_len == 0 {
+							panic!("expected something before the postfix macro invocation");
+						}
+						//println!("  -> built");
+						// Build the expr's tt
+						let expr_stream = res[(res.len() - expr_len)..].iter().cloned().collect();
+						res.truncate(res.len() - expr_len);
+						let expr_gr = Group::new(Delimiter::Brace, expr_stream);
+						let expr = Tt::Group(expr_gr);
+
+						let gr = self.visit_group(group);
+						let gr = add_prefix_expr_to_group(expr, gr);
 
 						// Add back the macro ident and bang
 						res.push(mac);
 						res.push(mac_bang);
 
-						let gr = self.visit_group(group);
-						add_prefix_expr_to_group(expr, gr)
+						gr
 					} else {
 						group
 					};
