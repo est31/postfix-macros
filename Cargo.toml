@@ -2,6 +2,7 @@
 name = "postfix-macros"
 version = "0.1.0"
 authors = ["est31 <MTest31@outlook.com>"]
+license = "MIT OR Apache-2.0"
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
