@@ -15,5 +15,6 @@ postfix_macros! {
 		let b = v.matches!(Some(42));
 		// Test that Groups work
 		let bb = b && (None::<()>).matches!(None);
+		assert!(bb);
 	}
 }
