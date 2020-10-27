@@ -13,11 +13,11 @@ val.iter()
 
 ## Explanation
 
-Postfix macros are being proposed for addition to the Rust language in [RFC 2442].
+[RFC 2442] proposes to add postfix macros to the Rust language.
 However, there are still very basic concerns from lang team members, and it seems they won't get resolved quickly, so it's unlikely to be merged any time soon.
 
-Until then, this crate will help you to call postfix macros in [UFCS] like manner: every macro can be called in postfix form,
-there is no need for a special `$self` parameter or anything like it.
+Until then, this crate will help you to call postfix macros in [UFCS] like manner:
+every macro can be called in postfix form, there is no need for a special `$self` parameter or anything like it.
 
 [RFC 2442]: https://github.com/rust-lang/rfcs/pull/2442
 [UFCS]: https://en.wikipedia.org/wiki/Uniform_Function_Call_Syntax
