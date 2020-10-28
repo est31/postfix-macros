@@ -24,7 +24,6 @@ every macro can be called in postfix form, there is no need for a special `$self
 
 ## TODO
 
-* Allow chaining
 * Add builtin macros: `unwrap_or!`, `do! { return }`, ...
 * Send a PR to rustc to syntactically permit postfix macros so that we can use an attribute macro.
   See [this PR](https://github.com/rust-lang/rust/pull/75857) for prior art.
