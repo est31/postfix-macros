@@ -189,14 +189,12 @@ impl Visitor {
 							panic!("expected something before the postfix macro invocation");
 						}
 						//println!("  -> built");
-						// Build the expr's tt
-						let expr_stream = res[(res.len() - expr_len)..].iter().cloned().collect();
-						res.truncate(res.len() - expr_len);
-						let expr_gr = Group::new(Delimiter::Brace, expr_stream);
-						let expr = Tt::Group(expr_gr);
 
+						// Build the group
 						let gr = self.visit_group(group);
-						let gr = add_prefix_expr_to_group(expr, gr);
+						let arg_tokens = &res[(res.len() - expr_len)..];
+						let gr = prepend_macro_arg_to_group(arg_tokens, gr);
+						res.truncate(res.len() - expr_len);
 
 						// Add back the macro ident and bang
 						res.push(mac);
@@ -229,9 +227,14 @@ impl Visitor {
 	}
 }
 
-fn add_prefix_expr_to_group(tokens :Tt, gr :Group) -> Group {
+fn prepend_macro_arg_to_group(tokens :&[Tt], gr :Group) -> Group {
+	// Build the expr's tt
+	let expr_stream = tokens.iter().cloned().collect();
+	let expr_gr = Group::new(Delimiter::Brace, expr_stream);
+	let expr = Tt::Group(expr_gr);
+
 	let delim = gr.delimiter();
-	let mut stream = TokenStream::from(tokens);
+	let mut stream = TokenStream::from(expr);
 	stream.extend(std::iter::once(Tt::Punct(Punct::new(',', Spacing::Alone))));
 	stream.extend(gr.stream());
 	Group::new(delim, stream)
