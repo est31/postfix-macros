@@ -27,9 +27,8 @@ postfix_macros! {
 		// Test that idents work
 		let b = v.matches!(Some(42));
 		// Test that Groups work
-		// TODO comment this back in once it works again
-		// let bb = b && (None::<()>).matches!(None);
-		// assert!(bb);
+		let bb = b && (None::<()>).matches!(None);
+		assert!(bb);
 	}
 }
 

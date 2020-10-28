@@ -49,21 +49,26 @@ impl Visitor {
 
 						// Walk the entire chain of tt's that
 						// form an expression.
-						let mut res_iter = res.iter().rev();
 						let mut expr_len = 0;
 						let mut last_was_punctuation = true;
-						for tt in res_iter {
+						'outer: while expr_len < res.len() {
+							let tt = &res[res.len() - 1 - expr_len];
 							let mut is_punctuation = false;
 							//println!("    {} {}", tt, last_was_punctuation);
 							match tt {
 								Tt::Group(_group) => {
 									is_punctuation = true;
 								},
-								Tt::Ident(_id) => {
+								Tt::Ident(id) => {
 									if !last_was_punctuation {
 										// two idents following another... must be `if <something>.foo!()`
-										// or something like it
-										break;
+										// or something like it.
+										// We need to special case the keyword mut though because `&mut` is usually
+										// prefixed to an expression.
+										let id_str = id.to_string();
+										if id_str != "mut" {
+											break;
+										}
 									}
 								},
 								Tt::Punct(p) => {
@@ -76,11 +81,101 @@ impl Visitor {
 										'.' | '&' if p.spacing() == Spacing::Joint => break,
 										'&' if p.spacing() == Spacing::Joint => (),
 										',' | ';' | '+' | '/' | '%' | '=' | '<' | '>' | '|' | '^' => break,
-										// TODO figure out what to do about & and * and - as they can be prepended to expressions.
-										// For safety reasons (to not accidentially change meaning of code),
-										// we error here
-										'&' | '*' | '-' => panic!("We currently don't know whether an expression ends \
-											in punctuation {} and error about it to not change meaning", p.as_char()),
+										// All of & * and - can be safely prepended to expressions in any number,
+										// However the symbols also exist in a binop context.
+										// Only the leading symbol can be a binop, but what makes matters a bit
+										// more complicated is that `&&` is a valid binop as well.
+										'&' | '*' | '-' => {
+											// First, we find the end of our binop partner
+											let mut offs_until_binop_partner = 0;
+											for tt in res[.. res.len() - expr_len - 1].iter().rev() {
+												match tt {
+													Tt::Group(gr) => {
+														match gr.delimiter() {
+															// `{0} & 7;` is invalid and `{}` is.
+															// => all &*- are unary ops.
+															Delimiter::Brace => {
+																expr_len += offs_until_binop_partner + 1;
+																break 'outer;
+															}
+															// Both [] and () are other-parties/partners of binops
+															// e.g. `(4) & 7` is valid while `(()) & 7` isn't
+															// => this group belongs to our binop partner
+															Delimiter::Parenthesis | Delimiter::Bracket => {
+																break;
+															},
+
+															// IDK what to do here, let's just error
+															Delimiter::None => {
+																panic!("We don't support groups delimitered by none yet: {}", gr);
+															},
+														}
+													},
+
+													Tt::Ident(id) => {
+														let id_str = id.to_string();
+														if id_str != "mut" {
+															// If we encounter any ident other than the `mut` keyword,
+															// it's part of the binop partner.
+															break;
+														}
+													},
+													Tt::Punct(p) => {
+														match p.as_char() {
+															// If we encounter =, it means an assignment OR comparison,
+															// both implying that all leading &*- were unary ops.
+															// (even though == is a binop, but that would be a binop at a higher level)
+															'=' => {
+																expr_len += offs_until_binop_partner + 1;
+																break 'outer;
+															},
+															// Continue the search
+															'&' | '*' | '-' => (),
+
+															// We don't support special symbols yet
+															// TODO support more
+															_ => panic!("Binop partner search encountered punct '{}'", p),
+														}
+													},
+													Tt::Literal(_lit) => {
+														// Literals are binop partners
+														break;
+													},
+												}
+												offs_until_binop_partner += 1;
+											}
+											// If there is nothing beyond the one unary op in res,
+											// no binop partner could be found,
+											// and we know that the sole punctuation
+											// was an unary op.
+											if offs_until_binop_partner == 0 {
+												break;
+											}
+											let first = &res[res.len() - (expr_len + 1) - offs_until_binop_partner];
+											let second = &res[res.len() - (expr_len + 1) - offs_until_binop_partner + 1];
+											let mut binop_tts = 1;
+											match first {
+												Tt::Group(_gr) => unreachable!(),
+												// This can occur, as of current code only when we have code like `(mut hello.foo!())`,
+												// which would indicate a pattern context I guess... but for now we don't support
+												// our macro to be called in pattern contexts.
+												Tt::Ident(id) => panic!("Can't start a binop chain with ident '{}'", id),
+												Tt::Punct(p1) => {
+													if let Tt::Punct(p2) = second {
+														let is_binop_and_and = p1.spacing() == Spacing::Joint &&
+															p1.as_char() == '&' && p2.as_char() == '&';
+														if is_binop_and_and {
+															binop_tts = 2;
+														}
+													}
+												},
+												Tt::Literal(_lit) => unreachable!(),
+											}
+											// We finally know how many tt's the binop operator takes up (1 or 2).
+											// Set the length of the expression and emit the expression.
+											expr_len += 1 + offs_until_binop_partner - binop_tts;
+											break;
+										},
 										c => panic!("Encountered unsupported punctuation {}", c),
 									}
 								},
