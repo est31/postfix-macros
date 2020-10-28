@@ -46,3 +46,18 @@ postfix_macros! {
 		(None::<()>).matches!(Some(_)).assert!();
 	}
 }
+
+postfix_macros! {
+	macro_rules! pass_through {
+		($v:tt,) => {
+			$v
+		};
+	}
+	#[test]
+	fn mut_doesnt_end_expr() {
+		fn foo(_v :&mut ()) {}
+		// Test that &mut doesn't terminate the expression
+		let v = &mut ().pass_through!();
+		foo(v);
+	}
+}
