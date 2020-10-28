@@ -23,10 +23,21 @@ pub use postfix_macros_impl::postfix_macros;
 Either unwraps the content passed to the macro,
 or executes the code block passed as second argument.
 
-The macro is very similar to functions like [Option::unwrap_or](std::Option::unwrap_or),
-Unlike functions like [Option::unwrap_or], he code block is lazily
-The macro is built for evaluation in postfix contexts,
-to facilitate quick
+The macro is very similar to functions like
+[`Option::unwrap_or`](std::option::Option::unwrap_or),
+in that it tries to attain the content contained inside,
+and if that's not possible, evaluates to the alternative
+provided by the user.
+Unlike `unwrap_or` though, the macro is lazily evaluated,
+so only if there is actually the need to return the
+alternative.
+
+The `unwrap_or_else` function provides
+lazy evaluation through a closure that you pass to it.
+
+A code block is way more powerful though, as it
+allows controlling the outside control flow,
+like issuing `continue`, `return`, or `break`.
 
 ```
 # use postfix_macros::{postfix_macros, unwrap_or};
