@@ -75,5 +75,7 @@ postfix_macros! {
 	#[test]
 	fn no_comma_pattern_macro() {
 		"hello".no_comma_pattern_macro!();
+		&().no_comma_pattern_macro!();
+		((), ().no_comma_pattern_macro!());
 	}
 }

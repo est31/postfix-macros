@@ -122,6 +122,9 @@ impl Visitor {
 													},
 													Tt::Punct(p) => {
 														match p.as_char() {
+															// ; either stands for the separator in array types/definitions,
+															// or it stands for a new statement. In both cases, unary op.
+															';' |
 															// If we encounter =, it means an assignment OR comparison,
 															// both implying that all leading &*- were unary ops.
 															// (even though == is a binop, but that would be a binop at a higher level)
