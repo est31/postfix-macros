@@ -62,7 +62,7 @@ postfix_macros! {
 	}
 }
 
-// If there is no args in the macro, don't require commas
+// If there are no args in the macro, don't require commas
 postfix_macros! {
 	macro_rules! no_comma_pattern_macro {
 		($v:expr,) => {
