@@ -62,7 +62,7 @@ impl Visitor {
 										// These all terminate expressions
 										'.' | '&' if p.spacing() == Spacing::Joint => break,
 										'&' if p.spacing() == Spacing::Joint => (),
-										',' | ';' | '+' | '/' | '=' | '<' | '>' | '|' => break,
+										',' | ';' | '+' | '/' | '%' | '=' | '<' | '>' | '|' | '^' => break,
 										// TODO figure out what to do about & and * and - as they can be prepended to expressions.
 										// For safety reasons (to not accidentially change meaning of code),
 										// we error here
