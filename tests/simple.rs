@@ -48,16 +48,32 @@ postfix_macros! {
 }
 
 postfix_macros! {
-	macro_rules! pass_through {
-		($v:tt,) => {
+	macro_rules! macro_declaration {
+		($v:tt) => {
 			$v
 		};
 	}
 	#[test]
-	fn mut_doesnt_end_expr() {
+	fn macro_declaration() {
 		fn foo(_v :&mut ()) {}
 		// Test that &mut doesn't terminate the expression
-		let v = &mut ().pass_through!();
+		let v = &mut ().macro_declaration!();
 		foo(v);
+	}
+}
+
+// If there is no args in the macro, don't require commas
+postfix_macros! {
+	macro_rules! no_comma_pattern_macro {
+		($v:expr,) => {
+			compile_error!("comma in pattern!");
+		};
+		($v:expr) => {
+			$v
+		};
+	}
+	#[test]
+	fn no_comma_pattern_macro() {
+		"hello".no_comma_pattern_macro!();
 	}
 }

@@ -233,9 +233,12 @@ fn prepend_macro_arg_to_group(tokens :&[Tt], gr :Group) -> Group {
 	let expr_gr = Group::new(Delimiter::Brace, expr_stream);
 	let expr = Tt::Group(expr_gr);
 
+	let stream = gr.stream();
 	let delim = gr.delimiter();
-	let mut stream = TokenStream::from(expr);
-	stream.extend(std::iter::once(Tt::Punct(Punct::new(',', Spacing::Alone))));
-	stream.extend(gr.stream());
-	Group::new(delim, stream)
+	let mut res_stream = TokenStream::from(expr);
+	if !stream.is_empty() {
+		res_stream.extend(std::iter::once(Tt::Punct(Punct::new(',', Spacing::Alone))));
+		res_stream.extend(stream);
+	}
+	Group::new(delim, res_stream)
 }
