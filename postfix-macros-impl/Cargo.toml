@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = ["est31 <MTest31@outlook.com>"]
 license = "MIT OR Apache-2.0"
 edition = "2018"
+description = "Proc macro crate for postfix-macros"
 
 [lib]
 proc-macro = true

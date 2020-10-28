@@ -1,13 +1,28 @@
 /*!
 Postfix macros on stable Rust, today.
 
-```Rust
+This is the crate containing the proc macro implementation
+of the `postfix-macros` macro.
+
+The crate `postfix-macros` crate reexports the macro
+defined by this crate, and adds some macros of its
+own that are helpful in postfix macro context.
+If you don't need these extra macros,
+you can use this crate instead and save
+the extra dependency.
+
+```
+# use postfix_macros_impl::postfix_macros;
+# #[derive(Debug, Clone, Copy)] enum Custom { Enum(()), EnumOther}
+# let val = [((),Custom::EnumOther,)];
+# postfix_macros! {
 "hello".assert_ne!("world");
 
 val.iter()
 	.map(|v| v.1)
 	.find(|z| z.matches!(Custom::Enum(_) | Custom::EnumOther))
 	.dbg!();
+# }
 ```
 
 */
