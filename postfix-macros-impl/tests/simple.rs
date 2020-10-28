@@ -1,4 +1,4 @@
-use postfix_macros::postfix_macros;
+use postfix_macros_impl::postfix_macros;
 
 postfix_macros! {
 	#[test]
