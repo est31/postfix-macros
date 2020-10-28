@@ -1,5 +1,5 @@
 //! Tests for when the expression ends
-use postfix_macros_impl::postfix_macros;
+use postfix_macros::postfix_macros;
 
 macro_rules! stringify_eq {
 	($v:tt, $($w:tt)*) => {{
