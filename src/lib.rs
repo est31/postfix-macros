@@ -100,11 +100,11 @@ impl Visitor {
 ///
 /// Returns the number of token tree items that
 /// belong to the expression.
-fn expression_length(res :&[Tt]) -> usize {
+fn expression_length(tts :&[Tt]) -> usize {
 	let mut expr_len = 0;
 	let mut last_was_punctuation = true;
-	'outer: while expr_len < res.len() {
-		let tt = &res[res.len() - 1 - expr_len];
+	'outer: while expr_len < tts.len() {
+		let tt = &tts[tts.len() - 1 - expr_len];
 		let mut is_punctuation = false;
 		//println!("    {} {}", tt, last_was_punctuation);
 		match tt {
@@ -140,7 +140,7 @@ fn expression_length(res :&[Tt]) -> usize {
 					'&' | '*' | '-' => {
 						// First, we find the end of our binop partner
 						let mut offs_until_binop_partner = 0;
-						for tt in res[.. res.len() - expr_len - 1].iter().rev() {
+						for tt in tts[.. tts.len() - expr_len - 1].iter().rev() {
 							match tt {
 								Tt::Group(gr) => {
 									match gr.delimiter() {
@@ -201,15 +201,15 @@ fn expression_length(res :&[Tt]) -> usize {
 							}
 							offs_until_binop_partner += 1;
 						}
-						// If there is nothing beyond the one unary op in res,
+						// If there is nothing beyond the one unary op in tts,
 						// no binop partner could be found,
 						// and we know that the sole punctuation
 						// was an unary op.
 						if offs_until_binop_partner == 0 {
 							break;
 						}
-						let first = &res[res.len() - (expr_len + 1) - offs_until_binop_partner];
-						let second = &res[res.len() - (expr_len + 1) - offs_until_binop_partner + 1];
+						let first = &tts[tts.len() - (expr_len + 1) - offs_until_binop_partner];
+						let second = &tts[tts.len() - (expr_len + 1) - offs_until_binop_partner + 1];
 						let mut binop_tts = 1;
 						match first {
 							Tt::Group(_gr) => unreachable!(),
