@@ -1,13 +1,19 @@
 /*!
 Postfix macros on stable Rust, today.
 
-```Rust
+```
+# use postfix_macros::{postfix_macros, unwrap_or};
+# #[derive(Debug, Clone, Copy)] enum Custom { Enum(()), EnumOther}
+# let val = [((),Custom::EnumOther,)];
+# postfix_macros! {
 "hello".assert_ne!("world");
 
 val.iter()
 	.map(|v| v.1)
 	.find(|z| z.matches!(Custom::Enum(_) | Custom::EnumOther))
-	.dbg!();
+	.dbg!()
+	.unwrap_or!{ return };
+# }
 ```
 
 */
