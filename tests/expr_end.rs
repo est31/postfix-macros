@@ -13,6 +13,10 @@ postfix_macros! {
 	fn mut_doesnt_end_expr() {
 		let _ = &mut ().stringify_eq!(&mut ());
 		let _ = 0 -(0).stringify_eq!((0));
+		// && and & & are actually two different things
+		let _ = &&(0).stringify_eq!(&& (0));
+		let _ = & &(0).stringify_eq!(& & (0));
 		let _ = (0, &().stringify_eq!(&()));
+		// TODO add more weird details of the expression parsing code
 	}
 }
