@@ -1,3 +1,16 @@
+/*!
+Postfix macros on stable Rust, today.
+
+```Rust
+"hello".assert_ne!("world");
+
+val.iter()
+	.map(|v| v.1)
+	.find(|z| z.matches!(Custom::Enum(_) | Custom::EnumOther))
+	.dbg!();
+```
+
+*/
 extern crate proc_macro;
 use proc_macro::{TokenStream, TokenTree as Tt, Punct, Group, Spacing, Delimiter};
 
