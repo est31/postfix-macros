@@ -84,7 +84,7 @@ macro_rules! unwrap_or {
 /**
 `match` macro with a default case shorthand
 
-If used in a postfix context, the macro is
+Meant to be used in a postfix context, as
 the postfix analog of `match` and `if let`
 Rust constructs.
 
