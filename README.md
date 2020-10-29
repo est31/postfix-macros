@@ -3,7 +3,8 @@
 Postfix macros on stable Rust, today.
 
 ```Rust
-"hello".assert_ne!("world");
+"hello world".println!();
+42.assert_ne!(4 + 2);
 
 val.iter()
 	.map(|v| v.1)

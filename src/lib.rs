@@ -6,7 +6,8 @@ Postfix macros on stable Rust, today.
 # #[derive(Debug, Clone, Copy)] enum Custom { Enum(()), EnumOther}
 # let val = [((),Custom::EnumOther,)];
 postfix_macros! {
-	"hello".assert_ne!("world");
+	"hello world".println!();
+	42.assert_ne!(4 + 2);
 
 	val.iter()
 		.map(|v| v.1)
