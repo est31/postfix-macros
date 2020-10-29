@@ -5,15 +5,15 @@ Postfix macros on stable Rust, today.
 # use postfix_macros::{postfix_macros, unwrap_or};
 # #[derive(Debug, Clone, Copy)] enum Custom { Enum(()), EnumOther}
 # let val = [((),Custom::EnumOther,)];
-# postfix_macros! {
-"hello".assert_ne!("world");
+postfix_macros! {
+	"hello".assert_ne!("world");
 
-val.iter()
-	.map(|v| v.1)
-	.find(|z| z.matches!(Custom::Enum(_) | Custom::EnumOther))
-	.dbg!()
-	.unwrap_or!{ return };
-# }
+	val.iter()
+		.map(|v| v.1)
+		.find(|z| z.matches!(Custom::Enum(_) | Custom::EnumOther))
+		.dbg!()
+		.unwrap_or!{ return };
+}
 ```
 
 */
