@@ -17,6 +17,22 @@ postfix_macros! {
 }
 ```
 
+The crate provides the [`postfix-macros`](postfix_macros) macro,
+as well as some helpful macros for use in a postfix context,
+for your greatest convenience.
+*/
+
+/**
+Proc macro to parse code containing postfix macros,
+to rewrite it to use traditional macro invocations.
+
+The main macro of this crate.
+
+The macro scans for `expr.macro_invoc!(params)` patterns
+and changes them to `macro_invoc!(expr, params)` patterns.
+
+If no parameters are passed to the postfix macro,
+then no trailing `,` is emitted.
 */
 pub use postfix_macros_impl::postfix_macros;
 
@@ -66,9 +82,10 @@ macro_rules! unwrap_or {
 }
 
 /**
-Postfix `match` macro with a default case shorthand
+`match` macro with a default case shorthand
 
-The macro is the postfix analog of `match` and `if let`
+If used in a postfix context, the macro is
+the postfix analog of `match` and `if let`
 Rust constructs.
 
 ```
