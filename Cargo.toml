@@ -5,7 +5,10 @@ members = ["postfix-macros-impl", "."]
 name = "postfix-macros"
 version = "0.1.0"
 authors = ["est31 <MTest31@outlook.com>"]
+repository = "https://github.com/est31/postfix-macros"
+description = "Postfix macros on stable Rust, today"
 license = "MIT OR Apache-2.0"
+readme = "README.md"
 edition = "2018"
 
 [dependencies]
