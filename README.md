@@ -15,10 +15,44 @@ val.iter()
 ## Explanation
 
 [RFC 2442] proposes to add postfix macros to the Rust language.
-However, there are still very basic concerns from lang team members, and it seems they won't get resolved quickly, so it's unlikely to be merged any time soon.
+However, there are still very basic concerns from lang team members,
+and it seems they won't get resolved quickly, so it's unlikely to be merged any time soon.
 
-Until then, this crate will help you to call postfix macros in [UFCS] like manner:
-every macro can be called in postfix form, there is no need for a special `$self` parameter or anything like it.
+The `postfix-macros` crate provides you with a proc macro `postfix_macros`
+that checks for `possibly.chained.expression.macro_name!(params)` patterns
+and then rewrites them in terms of traditional macro invocation, prepending
+the expression to the passed parameters. This turns every "bang" macro
+that's available to you into a potential postfix macro.
+As if that wasn't enough, this crate additionally provides a set of
+macros for use in a postfix context, for your greatest convenience.
+
+As an example, the `unwrap_or!` macro enables something that needed 5 lines before:
+
+```Rust
+let v = if let Some(v) = something {
+	v
+} else {
+	continue
+};
+```
+
+to be written in a single line inside a `postfix-macros` context:
+
+```Rust
+let v = something.unwrap_or!(continue);
+```
+
+Furthermore, it also replaces the `unwrap_or_else` closure pattern with
+something that's closer to the `unwrap_or` function in terms of cleanliness,
+while being just as lazily evaluating as `unwrap_or_else`:
+
+```Rust
+let v = something.unwrap_or_else(|| some_expensive_fn_call(1, 2, 3));
+```
+
+```Rust
+let v = something.unwrap_or!(some_expensive_fn_call(1, 2, 3));
+```
 
 [RFC 2442]: https://github.com/rust-lang/rfcs/pull/2442
 [UFCS]: https://en.wikipedia.org/wiki/Uniform_Function_Call_Syntax
