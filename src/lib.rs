@@ -63,3 +63,40 @@ macro_rules! unwrap_or {
 		}
 	};
 }
+
+/**
+Postfix `match` macro with a default case shorthand
+
+The macro is the postfix analog of `match` and `if let`
+Rust constructs.
+
+```
+# use postfix_macros::{postfix_macros, match_or};
+# postfix_macros! {
+#[derive(Copy, Clone)]
+enum Foo {
+	Bar(u8),
+	Baz,
+}
+let v = Foo::Bar(42);
+let mut w = 0;
+for i in 0..3 {
+	w += i;
+	v.match_or!{ Foo::Bar(x) => x; break };
+}
+assert_eq!(w, 3);
+# }
+```
+*/
+#[macro_export]
+macro_rules! match_or {
+	($v:expr, $($pat:pat => $e:expr)+ ; $($else:tt)*) => {
+		match $v {
+			$($pat => $e)*,
+			_ => {
+				$($else)*
+			},
+		}
+	};
+}
+
