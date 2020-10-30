@@ -15,14 +15,14 @@ the extra dependency.
 # use postfix_macros_impl::postfix_macros;
 # #[derive(Debug, Clone, Copy)] enum Custom { Enum(()), EnumOther}
 # let val = [((),Custom::EnumOther,)];
-# postfix_macros! {
-"hello".assert_ne!("world");
+postfix_macros! {
+	"hello".assert_ne!("world");
 
-val.iter()
-	.map(|v| v.1)
-	.find(|z| z.matches!(Custom::Enum(_) | Custom::EnumOther))
-	.dbg!();
-# }
+	val.iter()
+		.map(|v| v.1)
+		.find(|z| z.matches!(Custom::Enum(_) | Custom::EnumOther))
+		.dbg!();
+}
 ```
 
 */
