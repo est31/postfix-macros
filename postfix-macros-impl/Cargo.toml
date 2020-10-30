@@ -9,5 +9,6 @@ description = "Proc macro crate for postfix-macros"
 
 [lib]
 proc-macro = true
+path = "lib.rs"
 
 [dependencies]
