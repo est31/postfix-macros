@@ -9,6 +9,13 @@ postfix_macros! {
 
 postfix_macros! {
 	#[test]
+	fn hello_println() {
+		"hello".println!();
+	}
+}
+
+postfix_macros! {
+	#[test]
 	fn conditional() {
 		let v = 40i32.checked_add(2);
 		// Test that postfix macros work

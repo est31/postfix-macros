@@ -261,10 +261,21 @@ fn expression_length(tts :&[Tt]) -> usize {
 }
 
 fn prepend_macro_arg_to_group(tokens :&[Tt], gr :Group) -> Group {
-	// Build the expr's tt
-	let expr_stream = tokens.iter().cloned().collect();
-	let expr_gr = Group::new(Delimiter::Brace, expr_stream);
-	let expr = Tt::Group(expr_gr);
+	// Build the expr's tt.
+	// If there is only one token and it's
+	// a variable/constant/static name, or a literal,
+	// we pass it directly, otherwise we wrap it in {}
+	// to make it safer.
+	let expr = match &tokens {
+		&[tt] if matches!(tt, Tt::Literal(_) | Tt::Ident(_)) => {
+			tt.clone()
+		},
+		_ => {
+			let expr_stream = tokens.iter().cloned().collect();
+			let expr_gr = Group::new(Delimiter::Brace, expr_stream);
+			Tt::Group(expr_gr)
+		},
+	};
 
 	let stream = gr.stream();
 	let delim = gr.delimiter();
