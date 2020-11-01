@@ -118,16 +118,24 @@ impl Visitor {
 fn expression_length(tts :&[Tt]) -> usize {
 	let mut expr_len = 0;
 	let mut last_was_punctuation = true;
+	let mut last_was_group = true;
 	'outer: while expr_len < tts.len() {
 		let tt = &tts[tts.len() - 1 - expr_len];
 		let mut is_punctuation = false;
+		let mut is_group = false;
 		//println!("    {} {}", tt, last_was_punctuation);
 		match tt {
 			Tt::Group(_group) => {
-				is_punctuation = true;
+				// If the group wasn't terminated by a punctuation,
+				// it belongs to e.g. a function body, if clause, etc,
+				// but not to our expression
+				if !last_was_punctuation {
+					break;
+				}
+				is_group = true;
 			},
 			Tt::Ident(id) => {
-				if !last_was_punctuation {
+				if !last_was_punctuation && !last_was_group {
 					// two idents following another... must be `if <something>.foo!()`
 					// or something like it.
 					// We need to special case the keyword mut though because `&mut` is usually
@@ -256,6 +264,7 @@ fn expression_length(tts :&[Tt]) -> usize {
 		}
 		expr_len += 1;
 		last_was_punctuation = is_punctuation;
+		last_was_group = is_group;
 	}
 	expr_len
 }
