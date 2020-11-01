@@ -161,10 +161,10 @@ macro_rules! then {
 }
 
 /**
-`else` clauses for the [`then`] macro
+`else` clauses for the [`then!`] macro
 
 Meant to be used in a postfix context.
-The `then!()` macro would serve as
+The [`then!`] macro would serve as
 the postfix analog of `if`, while
 this macro would be the postfix analog
 of `else`.
