@@ -136,6 +136,12 @@ Executes the body if the argument is `true`
 Meant to be used in a postfix context, as
 the postfix analog of `if`.
 
+With the `bool::then` function, there is a
+[currently unstable](https://github.com/rust-lang/rust/issues/64260)
+equivalent in the standard library, but
+the macro doesn't put the body into a
+closure, and is thus more powerful.
+
 Evaluates the first argument as a boolean,
 and if it's `true`, executes the body.
 
