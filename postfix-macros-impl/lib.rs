@@ -103,8 +103,11 @@ impl Visitor {
 	}
 	fn visit_group(&mut self, group :Group) -> Group {
 		let delim = group.delimiter();
+		let span = group.span();
 		let stream = self.visit_stream(group.stream());
-		Group::new(delim, stream)
+		let mut gr = Group::new(delim, stream);
+		gr.set_span(span);
+		gr
 	}
 }
 
