@@ -38,20 +38,22 @@ pub use postfix_macros_impl::postfix_macros;
 
 /**
 Either unwraps the content passed to the macro,
-or executes the code block passed as second argument.
+or executes the passed code block.
 
 The macro is very similar to functions like
 [`Option::unwrap_or`](std::option::Option::unwrap_or),
 in that it tries to attain the content contained inside,
 and if that's not possible, evaluates to the alternative
 provided by the user.
+
 Unlike the function though, the body of the macro is lazily
 evaluated, so only if there is actually the need to return
 the alternative, similar to the `unwrap_or_else` function.
 
 A code block is way more powerful as `unwrap_or_else`,
-though as it allows controlling the outside control
-flow, like issuing `continue`, `return`, or `break`.
+though, as it allows issuing commands like `continue`,
+`return`, or `break` in the body that can bring control
+flow outside of the body.
 
 As such, the `unwrap_or` macro combines the benefits of
 both the `unwrap_or` and `unwrap_or_else` functions.
@@ -59,6 +61,11 @@ both the `unwrap_or` and `unwrap_or_else` functions.
 The macro requires the presence of two functions on the
 underlying type: `map` and `unwrap_or`. Maybe in the future
 when the `Try` trait is stable, it will be used instead.
+
+If you want to do more powerful matching, you can
+use the [`match_or`](crate::match_or) macro instead.
+
+# Examples
 
 ```
 # use postfix_macros::{postfix_macros, unwrap_or};
