@@ -93,10 +93,10 @@ macro_rules! unwrap_or {
 }
 
 /**
-`match` macro with a default case shorthand
+**`match`** macro with a default case shorthand
 
 Meant to be used in a postfix context, as
-the postfix analog of `match` and `if let`
+the postfix analog of **`match`** and **`if let`**
 Rust constructs.
 
 ```
@@ -134,7 +134,7 @@ macro_rules! match_or {
 Executes the body if the argument is `true`
 
 Meant to be used in a postfix context, as
-the postfix analog of `if`.
+the postfix analog of **`if`**.
 
 With the `bool::then` function, there is a
 [currently unstable](https://github.com/rust-lang/rust/issues/64260)
@@ -167,13 +167,13 @@ macro_rules! then {
 }
 
 /**
-`else` clauses for the [`then!`] macro
+**`else`** clauses for the [`then!`] macro
 
 Meant to be used in a postfix context.
 The [`then!`] macro would serve as
-the postfix analog of `if`, while
+the postfix analog of **`if`**, while
 this macro would be the postfix analog
-of `else`.
+of **`else`**.
 
 ```
 # use postfix_macros::{postfix_macros, then, then_else};
