@@ -70,3 +70,21 @@ postfix_macros! {
 			.stringify_eq!((20..42).find(|v| v % 13 == 7));
 	}
 }
+
+/*
+// Test that if or else doesn't terminate the expression
+postfix_macros! {
+	#[test]
+	fn if_belongs() {
+		if false { "hello" } else { "hi" }
+			.to_string()
+			.stringify_eq!(if false { "hello" } else { "hi" }.to_string());
+	}
+	#[test]
+	fn if_else_belongs() {
+		if false { "hello" } else { "hi" }
+			.to_string()
+			.stringify_eq!(if false { "hello" } else { "hi" }.to_string());
+	}
+}
+*/
