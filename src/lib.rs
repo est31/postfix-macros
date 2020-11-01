@@ -45,16 +45,20 @@ The macro is very similar to functions like
 in that it tries to attain the content contained inside,
 and if that's not possible, evaluates to the alternative
 provided by the user.
-Unlike `unwrap_or` though, the macro is lazily evaluated,
-so only if there is actually the need to return the
-alternative.
+Unlike the function though, the body of the macro is lazily
+evaluated, so only if there is actually the need to return
+the alternative, similar to the `unwrap_or_else` function.
 
-The `unwrap_or_else` function provides
-lazy evaluation through a closure that you pass to it.
+A code block is way more powerful as `unwrap_or_else`,
+though as it allows controlling the outside control
+flow, like issuing `continue`, `return`, or `break`.
 
-A code block is way more powerful though, as it
-allows controlling the outside control flow,
-like issuing `continue`, `return`, or `break`.
+As such, the `unwrap_or` macro combines the benefits of
+both the `unwrap_or` and `unwrap_or_else` functions.
+
+The macro requires the presence of two functions on the
+underlying type: `map` and `unwrap_or`. Maybe in the future
+when the `Try` trait is stable, it will be used instead.
 
 ```
 # use postfix_macros::{postfix_macros, unwrap_or};
