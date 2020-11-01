@@ -159,3 +159,35 @@ macro_rules! then {
 		}
 	};
 }
+
+/**
+`else` clauses for the [`then`] macro
+
+Meant to be used in a postfix context.
+The `then!()` macro would serve as
+the postfix analog of `if`, while
+this macro would be the postfix analog
+of `else`.
+
+```
+# use postfix_macros::{postfix_macros, then, then_else};
+# postfix_macros! {
+let mut w = 0;
+for i in 1..10 {
+	w += i;
+	(w % i == 0)
+		.then!{ w += i * i }
+		.then_else!{ w += 1 };
+}
+assert_eq!(w, 181);
+# }
+```
+*/
+#[macro_export]
+macro_rules! then_else {
+	($v:tt, $($body:tt)*) => {
+		$v {
+			$($body)*
+		}
+	};
+}
