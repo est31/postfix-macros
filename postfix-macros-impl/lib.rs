@@ -2,7 +2,7 @@
 Postfix macros on stable Rust, today.
 
 This is the crate containing the proc macro implementation
-of the `postfix_macros` macro.
+of the [`postfix_macros!`] macro.
 
 The `postfix-macros` crate reexports the macro
 defined by this crate, and adds some macros of its

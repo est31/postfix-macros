@@ -17,7 +17,7 @@ postfix_macros! {
 }
 ```
 
-The crate provides the [`postfix-macros`](postfix_macros) macro,
+The crate provides the [`postfix_macros!`] macro,
 as well as some helpful macros for use in a postfix context,
 for your greatest convenience.
 */
@@ -63,7 +63,7 @@ underlying type: `map` and `unwrap_or`. Maybe in the future
 when the `Try` trait is stable, it will be used instead.
 
 If you want to do more powerful matching, you can
-use the [`match_or`](crate::match_or) macro instead.
+use the [`match_or!`] macro instead.
 
 # Examples
 
