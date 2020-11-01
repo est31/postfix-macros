@@ -20,6 +20,14 @@ postfix_macros! {
 The crate provides the [`postfix_macros!`] macro,
 as well as some helpful macros for use in a postfix context,
 for your greatest convenience.
+
+| Rust construct | postfix replacement macro |
+| - | - |
+| `unwrap_or`, `unwrap_or_else` | [`unwrap_or!`] |
+| **`if let`** with else clause | [`match_or!`] |
+| **`match`** with default case | [`match_or!`] |
+| **`if`** `<bool>`, `bool::then` | [`then!`] |
+| **`else`** | [`then_else!`] |
 */
 
 /**
