@@ -34,18 +34,18 @@ postfix_macros! {
 postfix_macros! {
 	#[test]
 	fn nested_fn_1() {
-		fn foo() {}
+		fn _foo() {}
 		42.stringify_eq!(42);
 	}
 	#[test]
 	fn nested_fn_2() {
 		let hello = 42;
-		fn foo() {}
+		fn _foo() {}
 		hello.stringify_eq!(hello);
 	}
 	#[test]
 	fn nested_fn_3() {
-		fn foo() {}
+		fn _foo() {}
 		(20..42)
 			.find(|v| v % 13 == 7)
 			.stringify_eq!((20..42).find(|v| v % 13 == 7));

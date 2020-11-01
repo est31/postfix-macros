@@ -1,3 +1,5 @@
+#![allow(unused_parens)]
+
 use postfix_macros::postfix_macros;
 
 postfix_macros! {
