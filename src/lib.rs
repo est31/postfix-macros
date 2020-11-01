@@ -128,3 +128,34 @@ macro_rules! match_or {
 		}
 	};
 }
+
+
+/**
+Executes the body if the argument is `true`
+
+Meant to be used in a postfix context, as
+the postfix analog of `if`.
+
+Evaluates the first argument as a boolean,
+and if it's `true`, executes the body.
+
+```
+# use postfix_macros::{postfix_macros, then};
+# postfix_macros! {
+let mut w = 0;
+for i in 1..10 {
+	w += i;
+	(w % i == 0).then!{ w += i * i };
+}
+assert_eq!(w, 75);
+# }
+```
+*/
+#[macro_export]
+macro_rules! then {
+	($v:expr, $($body:tt)*) => {
+		if $v {
+			$($body)*
+		}
+	};
+}
