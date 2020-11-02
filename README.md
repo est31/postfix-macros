@@ -59,7 +59,6 @@ let v = something.unwrap_or!(some_expensive_fn_call(1, 2, 3));
 
 ## TODO
 
-* Add builtin macros: `do! { return }`, ...
 * Send a PR to rustc to syntactically permit postfix macros so that we can use an attribute macro.
   See [this PR](https://github.com/rust-lang/rust/pull/75857) for prior art.
 
