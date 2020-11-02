@@ -139,7 +139,7 @@ fn expression_length(tts :&[Tt]) -> usize {
 			},
 			Tt::Ident(id) => {
 				if !last_was_punctuation && !last_was_group {
-					// two idents following another... must be `if <something>.foo!()`
+					// two idents following another... must be `if <something>.foo!() { <stuff> }`
 					// or something like it.
 					// We need to special case the keyword mut though because `&mut` is usually
 					// prefixed to an expression.
