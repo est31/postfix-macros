@@ -31,6 +31,16 @@ postfix_macros! {
 	}
 }
 
+// Test that array lookups work
+postfix_macros! {
+	#[test]
+	fn arrays() {
+		let arr = ["hello", "world"];
+		arr[0].stringify_eq!(arr[0]);
+		[0, 1, 2, 3, 4,].stringify_eq!([0, 1, 2, 3, 4,]);
+	}
+}
+
 // Test a group without punctuation terminating the
 // expression.
 postfix_macros! {
