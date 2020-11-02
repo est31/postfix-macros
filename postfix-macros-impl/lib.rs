@@ -27,7 +27,8 @@ postfix_macros! {
 
 */
 extern crate proc_macro;
-use proc_macro::{TokenStream, TokenTree as Tt, Punct, Group, Spacing, Delimiter};
+use proc_macro::{TokenStream, TokenTree as Tt, Punct, Group, Spacing,
+	Delimiter};
 
 #[proc_macro]
 pub fn postfix_macros(stream :TokenStream) -> TokenStream {
@@ -81,6 +82,9 @@ impl Visitor {
 						res.push(mac);
 						res.push(mac_bang);
 
+						/*println!("res so far: {}",
+							res.iter().cloned().collect::<TokenStream>());*/
+
 						gr
 					} else {
 						group
@@ -128,14 +132,68 @@ fn expression_length(tts :&[Tt]) -> usize {
 		let mut is_group = false;
 		//println!("    {} {}", tt, last_was_punctuation);
 		match tt {
-			Tt::Group(_group) => {
+			Tt::Group(group) => {
+				is_group = true;
 				// If the group wasn't terminated by a punctuation,
 				// it belongs to e.g. a function body, if clause, etc,
 				// but not to our expression
 				if !last_was_punctuation {
 					break;
 				}
-				is_group = true;
+
+				// If the group was terminated by a punctuation,
+				// it belongs to the postfix macro chain.
+				// If it's delimitered by braces, so is { ... },
+				// we need to check whether the group was an if,
+				// match, else, or else if block, and add stuff accordingly.
+
+				// If we have {}. it might be an if, match or else block.
+				if group.delimiter() == Delimiter::Brace {
+					// We are at the end, it was a {} block.
+					if expr_len + 1 >= tts.len() {
+						expr_len += 1;
+						break;
+					}
+					let tt_before = &tts[tts.len() - 2 - expr_len];
+					match tt_before {
+						Tt::Group(_group) => {
+							// e.g. `if foo() {}`, `if { true } {}`, `if if {true } else { false } {}`,
+							// `if bools[..] {}`.
+							// Basically, just start the expression search and hope for the best :)
+							panic!("Group preceeded by group not supported yet");
+						},
+						Tt::Ident(id) => {
+							let id_str = id.to_string();
+							if id_str == "else" {
+								// TODO
+								panic!("Following else is not supported yet");
+							} else {
+								// Any other ident: start the full expression search
+								// TODO
+							}
+						},
+						Tt::Punct(p) => match p.as_char() {
+							// These indicate the end of the expression
+							';' | ',' => {
+								expr_len += 1;
+								break;
+							},
+							// This indicates the group was part of something else,
+							// like a prior macro foo! {} . bar!().
+							// Just continue the search
+							'!' => (),
+							// Unsupported stuff
+							// TODO support closures
+							'|' => panic!("Closures not supported yet"),
+							p => panic!("Group expr search encountered unsupported punctuation {}", p),
+						},
+						Tt::Literal(_lit) => {
+							// TODO start an expression search, then find out if there's an if/match clause.
+							panic!("Group directly preceeded by literal not supported yet");
+						},
+					}
+				}
+
 			},
 			Tt::Ident(id) => {
 				if !last_was_punctuation && !last_was_group {

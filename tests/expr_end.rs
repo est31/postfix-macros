@@ -1,5 +1,5 @@
 //! Tests for when the expression ends
-#![allow(unused_parens)]
+#![allow(unused_parens, unused_braces)]
 
 use postfix_macros::postfix_macros;
 
@@ -100,6 +100,16 @@ postfix_macros! {
 	fn if_clause_4() {
 		if false {}
 		&-0.stringify_eq!(&-0);
+	}
+}
+
+// Test that braced expressions work
+postfix_macros! {
+	#[test]
+	fn braced() {
+		dbg!{ 42 }.stringify_eq!(dbg!{42});
+		{ 42 }.stringify_eq!({42});
+		(0, { "hello" }.stringify_eq!({ "hello" }));
 	}
 }
 
