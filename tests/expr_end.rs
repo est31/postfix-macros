@@ -41,6 +41,16 @@ postfix_macros! {
 	}
 }
 
+// Tests for colons
+postfix_macros! {
+	#[test]
+	fn colon() {
+		let _ :String = Default::default().stringify_eq!(Default::default());
+		// TODO this doesn't work
+		//None::<()>.stringify_eq!(None::<()>);
+	}
+}
+
 // Test a group without punctuation terminating the
 // expression.
 postfix_macros! {

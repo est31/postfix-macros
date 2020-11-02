@@ -154,7 +154,7 @@ fn expression_length(tts :&[Tt]) -> usize {
 				match p.as_char() {
 					// No expression termination
 					'.' if p.spacing() == Spacing::Alone => (),
-					'?' | '!' => (),
+					':' | '?' | '!' => (),
 					// These all terminate expressions
 					'.' | '&' if p.spacing() == Spacing::Joint => break,
 					'&' if p.spacing() == Spacing::Joint => (),
