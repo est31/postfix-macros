@@ -16,7 +16,8 @@ val.iter()
 
 [RFC 2442] proposes to add postfix macros to the Rust language.
 However, there are still very basic concerns from lang team members,
-and it seems they won't get resolved quickly, so it's unlikely to be merged any time soon.
+and it seems they won't get resolved quickly, so it's unlikely
+to be merged any time soon, if at all.
 
 The `postfix-macros` crate provides you with a proc macro `postfix_macros`
 that checks for `possibly.chained.expression.macro_name!(params)` patterns
