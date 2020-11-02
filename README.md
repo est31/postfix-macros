@@ -23,7 +23,7 @@ The `postfix-macros` crate provides you with a proc macro `postfix_macros`
 that checks for `possibly.chained.expression.macro_name!(params)` patterns
 and then rewrites them in terms of traditional macro invocation, prepending
 the expression to the passed parameters. This turns every "bang" macro
-that's available to you into a potential postfix macro.
+that's available to you into a potential postfix macro ([UFCS] style).
 As if that wasn't enough, this crate additionally provides a set of
 macros for use in a postfix context, for your greatest convenience.
 
