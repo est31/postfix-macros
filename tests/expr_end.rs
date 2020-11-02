@@ -1,4 +1,6 @@
 //! Tests for when the expression ends
+#![allow(unused_parens)]
+
 use postfix_macros::postfix_macros;
 
 macro_rules! stringify_eq {
