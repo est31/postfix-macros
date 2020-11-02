@@ -52,6 +52,11 @@ postfix_macros! {
 			.find(|v| v % 13 == 7)
 			.stringify_eq!((20..42).find(|v| v % 13 == 7));
 	}
+	#[test]
+	fn nested_fn_4() {
+		fn _foo() {}
+		&-0.stringify_eq!(&-0);
+	}
 
 	#[test]
 	fn if_clause_1() {
@@ -70,6 +75,11 @@ postfix_macros! {
 		(20..42)
 			.find(|v| v % 13 == 7)
 			.stringify_eq!((20..42).find(|v| v % 13 == 7));
+	}
+	#[test]
+	fn if_clause_4() {
+		if false {}
+		&-0.stringify_eq!(&-0);
 	}
 }
 
