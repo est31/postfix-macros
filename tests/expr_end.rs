@@ -146,6 +146,23 @@ postfix_macros! {
 }
 
 /*
+// Test that prefix operator search is enabled for match/if/etc.
+postfix_macros! {
+	#[test]
+	fn ref_match_belongs() {
+		&match false { _ => "hi" }
+			.to_string()
+			.stringify_eq!(&match false { _ => "hi" }.to_string());
+	}
+	#[test]
+	fn multi_ref_match_belongs() {
+		&&&&&match false { _ => "hi" }
+			.to_string()
+			.stringify_eq!(&&&&&match false { _ => "hi" }.to_string());
+	}
+}*/
+
+/*
 // Test that things which belong into an if expr
 // but terminate a chained . expr work correcly.
 postfix_macros! {
