@@ -122,6 +122,12 @@ postfix_macros! {
 			.stringify_eq!(if false { "hello" } else { "hi" }.to_string());
 	}
 	#[test]
+	fn if_else_if_belongs() {
+		if false { "hello" } else if true { "hi" } else { "hallo" }
+			.to_string()
+			.stringify_eq!(if false { "hello" } else if true { "hi" } else { "hallo" }.to_string());
+	}
+	#[test]
 	fn if_if_belongs() {
 		if if false { true } else { true } { "hello" } else { "hi" }
 			.to_string()

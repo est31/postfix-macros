@@ -200,7 +200,11 @@ fn expression_length(tts :&[Tt]) -> usize {
 						expr_len += sub_expr_len;
 						// Now check what's beyond the expression
 						let tt_before = tts.get(tts.len() - 1 - expr_len);
-						let tt_before_that = tts.get(tts.len() - 1 - expr_len);
+						let tt_before_that = if tts.len() < 2 + expr_len {
+							None
+						} else {
+							tts.get(tts.len() - 2 - expr_len)
+						};
 						match (tt_before_that, tt_before) {
 							(Some(Tt::Ident(id_t)), Some(Tt::Ident(id))) => {
 								let id_t = id_t.to_string();
@@ -214,7 +218,17 @@ fn expression_length(tts :&[Tt]) -> usize {
 									expr_len += 1;
 									break 'outer;
 								}
-							}
+							},
+							(_, Some(Tt::Ident(id))) => {
+								let id = id.to_string();
+								if id == "if" || id == "match" {
+									// Done!
+									expr_len += 1;
+									break 'outer;
+								} else {
+									// IDK something failed
+								}
+							},
 							(_, Some(Tt::Punct(p))) => {
 								match p.as_char() {
 									// This can be either == or if let Foo() =
