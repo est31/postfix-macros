@@ -152,11 +152,10 @@ fn expression_length(tts :&[Tt]) -> usize {
 				// If we have {}. it might be an if, match or else block.
 				if group.delimiter() == Delimiter::Brace {
 					loop {
-						println!("HELLO IM HERE {}", group);
+						println!("GROUP SEARCH IS IN {}", tts[tts.len() - 1 - expr_len]);
 						// We are at the end, it was a {} block.
 						if expr_len + 1 >= tts.len() {
-							expr_len += 1;
-							break 'outer;
+							break;
 						}
 						let tt_before = &tts[tts.len() - 2 - expr_len];
 						match tt_before {
@@ -168,7 +167,8 @@ fn expression_length(tts :&[Tt]) -> usize {
 							Tt::Ident(id) => {
 								let id_str = id.to_string();
 								if id_str == "else" {
-									expr_len += 2;
+									expr_len += 3;
+									//println!("ELSE");
 									// Continue the chain search
 									continue;
 								} else {
@@ -199,12 +199,20 @@ fn expression_length(tts :&[Tt]) -> usize {
 						let sub_expr_len = expression_length(&tts[..tts.len() - 1 - expr_len]);
 						expr_len += sub_expr_len;
 						// Now check what's beyond the expression
-						let tt_before = tts.get(tts.len() - 1 - expr_len);
-						let tt_before_that = if tts.len() < 2 + expr_len {
+						let tt_before = if tts.len() < 2 + expr_len {
 							None
 						} else {
 							tts.get(tts.len() - 2 - expr_len)
 						};
+						let tt_before_that = if tts.len() < 3 + expr_len {
+							None
+						} else {
+							tts.get(tts.len() - 3 - expr_len)
+						};
+
+						/*println!("group search before: {} {:?} {:?}", sub_expr_len,
+							tt_before_that.map(|v| v.to_string()),
+							tt_before.map(|v| v.to_string()));*/
 						match (tt_before_that, tt_before) {
 							(Some(Tt::Ident(id_t)), Some(Tt::Ident(id))) => {
 								let id_t = id_t.to_string();
@@ -214,17 +222,19 @@ fn expression_length(tts :&[Tt]) -> usize {
 									expr_len += 3;
 									// Continue the chain search.
 								} else if id == "match" {
-									// Done! Match terminates everything.
+									// Done with the if/match chain search.
+									is_group = false;
 									expr_len += 1;
-									break 'outer;
+									break;
 								}
 							},
 							(_, Some(Tt::Ident(id))) => {
 								let id = id.to_string();
 								if id == "if" || id == "match" {
-									// Done!
+									// Done with the if/match chain search.
+									is_group = false;
 									expr_len += 1;
-									break 'outer;
+									break;
 								} else {
 									// IDK something failed
 								}
@@ -248,6 +258,11 @@ fn expression_length(tts :&[Tt]) -> usize {
 									},
 									_ => panic!("{} in if not supported yet", p),
 								}
+							},
+							(None, None) => {
+								// Nothing comes before tt.
+								// We are done
+								break;
 							},
 							_ => {
 								panic!("Hit unsupported case: {:?} {:?}", tt_before_that.map(|v| v.to_string()),
@@ -276,7 +291,7 @@ fn expression_length(tts :&[Tt]) -> usize {
 					'.' if p.spacing() == Spacing::Alone => (),
 					':' | '?' | '!' => (),
 					// These all terminate expressions
-					'.' | '&' if p.spacing() == Spacing::Joint => break,
+					'.' if p.spacing() == Spacing::Joint => break,
 					',' | ';' | '+' | '/' | '%' | '=' | '<' | '>' | '|' | '^' => break,
 					// All of & * and - can be safely prepended to expressions in any number,
 					// However the symbols also exist in a binop context.
