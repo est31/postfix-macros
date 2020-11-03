@@ -29,6 +29,7 @@ for your greatest convenience.
 | **`if`** `<bool>`, `bool::then` | [`then!`] |
 | **`else`** | [`then_else!`] |
 */
+#![forbid(unsafe_code)]
 
 /**
 Proc macro to parse code containing postfix macros,

@@ -26,6 +26,8 @@ postfix_macros! {
 ```
 
 */
+#![forbid(unsafe_code)]
+
 extern crate proc_macro;
 use proc_macro::{TokenStream, TokenTree as Tt, Punct, Group, Spacing,
 	Delimiter};
