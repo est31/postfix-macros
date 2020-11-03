@@ -195,8 +195,8 @@ postfix_macros! {
 	#[test]
 	fn inside_if_clause() {
 		let hello = true;
-		// TODO this doesn't work
-		//if &false.stringify_eq!(&false) == &false {}
+		if &false.stringify_eq!(&false) == &false {}
+		match &&&-0.stringify_eq!(&&&-0) { _ => () }
 		if hello.stringify_eq!(hello) {}
 		if true.stringify_eq!(true) {}
 	}

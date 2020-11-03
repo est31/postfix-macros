@@ -326,10 +326,18 @@ fn expression_length(tts :&[Tt]) -> usize {
 
 								Tt::Ident(id) => {
 									let id_str = id.to_string();
-									if id_str != "mut" {
-										// If we encounter any ident other than the `mut` keyword,
+									match id_str.as_str() {
+										// `if` and `match` indicate that there is no binop
+										// but instead all prefix &*-s were unary ops.
+										"if" | "match" => {
+											expr_len += offs_until_binop_partner + 1;
+											break 'outer;
+										},
+										// `mut` is allowed part of a prefix
+										"mut" => (),
+										// If we encounter any other ident,
 										// it's part of the binop partner.
-										break;
+										_ => break,
 									}
 								},
 								Tt::Punct(p) => {
