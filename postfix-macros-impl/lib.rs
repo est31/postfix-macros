@@ -240,6 +240,7 @@ fn expression_length(tts :&[Tt]) -> usize {
 												// TODO maybe instead of calling expression_length above,
 												// create a new function that calls expression_length internally and
 												// handles this case, calling expression_length again if needed?
+												// Or pass some kind of precedence setting to expression_length?
 												panic!("== in if clause not supported yet");
 											}
 										}
