@@ -113,15 +113,8 @@ postfix_macros! {
 	}
 }
 
-/*
 // Test that if, else, or match don't terminate the expression
 postfix_macros! {
-	#[test]
-	fn if_belongs() {
-		if false { "hello" } else { "hi" }
-			.to_string()
-			.stringify_eq!(if false { "hello" } else { "hi" }.to_string());
-	}
 	#[test]
 	fn if_else_belongs() {
 		if false { "hello" } else { "hi" }
@@ -145,7 +138,6 @@ postfix_macros! {
 			.stringify_eq!(match false { _ => "hi" }.to_string());
 	}
 }
-*/
 
 // Postfix macros inside if clauses
 postfix_macros! {

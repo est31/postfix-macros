@@ -151,51 +151,95 @@ fn expression_length(tts :&[Tt]) -> usize {
 
 				// If we have {}. it might be an if, match or else block.
 				if group.delimiter() == Delimiter::Brace {
-					// We are at the end, it was a {} block.
-					if expr_len + 1 >= tts.len() {
-						expr_len += 1;
-						break;
-					}
-					let tt_before = &tts[tts.len() - 2 - expr_len];
-					match tt_before {
-						Tt::Group(_group) => {
-							// e.g. `if foo() {}`, `if { true } {}`, `if if {true } else { false } {}`,
-							// `if bools[..] {}`.
-							// Basically, just start the expression search and hope for the best :)
-							panic!("Group preceeded by group not supported yet");
-						},
-						Tt::Ident(id) => {
-							let id_str = id.to_string();
-							if id_str == "else" {
-								// TODO
-								panic!("Following else is not supported yet");
-							} else {
-								// Any other ident: start the full expression search
-								// TODO
-							}
-						},
-						Tt::Punct(p) => match p.as_char() {
-							// These indicate the end of the expression
-							';' | ',' => {
-								expr_len += 1;
-								break;
+					loop {
+						println!("HELLO IM HERE {}", group);
+						// We are at the end, it was a {} block.
+						if expr_len + 1 >= tts.len() {
+							expr_len += 1;
+							break 'outer;
+						}
+						let tt_before = &tts[tts.len() - 2 - expr_len];
+						match tt_before {
+							Tt::Group(_group) => {
+								// e.g. `if foo() {}`, `if { true } {}`, `if if {true } else { false } {}`,
+								// `if bools[..] {}`.
+								// Basically, just start the expression search and hope for the best :)
 							},
-							// This indicates the group was part of something else,
-							// like a prior macro foo! {} . bar!().
-							// Just continue the search
-							'!' => (),
-							// Unsupported stuff
-							// TODO support closures
-							'|' => panic!("Closures not supported yet"),
-							p => panic!("Group expr search encountered unsupported punctuation {}", p),
-						},
-						Tt::Literal(_lit) => {
-							// TODO start an expression search, then find out if there's an if/match clause.
-							panic!("Group directly preceeded by literal not supported yet");
-						},
+							Tt::Ident(id) => {
+								let id_str = id.to_string();
+								if id_str == "else" {
+									expr_len += 2;
+									// Continue the chain search
+									continue;
+								} else {
+									// Any other ident: must be part of an expression like if something.expr {}.foo().
+									// Start the full expression search
+								}
+							},
+							Tt::Punct(p) => match p.as_char() {
+								// These indicate the end of the expression
+								';' | ',' => {
+									expr_len += 1;
+									break 'outer;
+								},
+								// This indicates the group was part of something else,
+								// like a prior macro foo! {} . bar!().
+								// Just continue the outer search normally
+								'!' => break,
+								// Unsupported stuff
+								// TODO support closures
+								'|' => panic!("Closures not supported yet"),
+								p => panic!("Group expr search encountered unsupported punctuation {}", p),
+							},
+							Tt::Literal(_lit) => {
+								// Start the expression search
+							},
+						}
+						// Perform the expression search
+						let sub_expr_len = expression_length(&tts[..tts.len() - 1 - expr_len]);
+						expr_len += sub_expr_len;
+						// Now check what's beyond the expression
+						let tt_before = tts.get(tts.len() - 1 - expr_len);
+						let tt_before_that = tts.get(tts.len() - 1 - expr_len);
+						match (tt_before_that, tt_before) {
+							(Some(Tt::Ident(id_t)), Some(Tt::Ident(id))) => {
+								let id_t = id_t.to_string();
+								let id = id.to_string();
+								if id_t == "else" && id == "if" {
+									// Else if clause.
+									expr_len += 3;
+									// Continue the chain search.
+								} else if id == "match" {
+									// Done! Match terminates everything.
+									expr_len += 1;
+									break 'outer;
+								}
+							}
+							(_, Some(Tt::Punct(p))) => {
+								match p.as_char() {
+									// This can be either == or if let Foo() =
+									'=' => {
+										if let Some(Tt::Punct(p_t)) = tt_before_that {
+											if p_t.as_char() == '=' {
+												// Parse another expr
+												// TODO
+												// TODO maybe instead of calling expression_length above,
+												// create a new function that calls expression_length internally and
+												// handles this case, calling expression_length again if needed?
+												panic!("== in if clause not supported yet");
+											}
+										}
+										panic!("if let not supported");
+									},
+									_ => panic!("{} in if not supported yet", p),
+								}
+							},
+							_ => {
+								panic!("Hit unsupported case: {:?} {:?}", tt_before_that, tt_before);
+							},
+						}
 					}
 				}
-
 			},
 			Tt::Ident(id) => {
 				if !last_was_punctuation && !last_was_group {
