@@ -132,7 +132,7 @@ fn expression_length(tts :&[Tt]) -> usize {
 		let tt = &tts[tts.len() - 1 - expr_len];
 		let mut is_punctuation = false;
 		let mut is_group = false;
-		//println!("    {} {}", tt, last_was_punctuation);
+		//println!("   {} {} {}", expr_len, tt, last_was_punctuation);
 		match tt {
 			Tt::Group(group) => {
 				is_group = true;
