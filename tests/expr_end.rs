@@ -20,7 +20,7 @@ macro_rules! stringify_eq {
 
 postfix_macros! {
 	#[test]
-	fn mut_doesnt_end_expr() {
+	fn prefix_operator_doesnt_end_expr() {
 		let _ = &mut ().stringify_eq!(&mut ());
 		let _ = 0 -(0).stringify_eq!((0));
 		// && and & & are actually two different things
@@ -28,6 +28,12 @@ postfix_macros! {
 		let _ = & &(0).stringify_eq!(& & (0));
 		let _ = (0, &().stringify_eq!(&()));
 		// TODO add more weird details of the expression parsing code
+	}
+	#[test]
+	fn prefix_operator_at_start() {
+		{ &mut ().stringify_eq!(&mut ()); }
+		{ &&&(0).stringify_eq!(&&&(0)); }
+		{ &().stringify_eq!(&()); }
 	}
 }
 
@@ -157,7 +163,6 @@ postfix_macros! {
 	}
 	#[test]
 	fn multi_ref_match_belongs() {
-		"";
 		&&&&&match false { _ => "hi" }
 			.to_string()
 			.stringify_eq!(&&&&&match false { _ => "hi" }.to_string());

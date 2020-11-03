@@ -365,7 +365,8 @@ fn expression_length(tts :&[Tt]) -> usize {
 						// no binop partner could be found,
 						// and we know that the sole punctuation
 						// was an unary op.
-						if offs_until_binop_partner == 0 {
+						if offs_until_binop_partner == tts.len() - expr_len - 1 {
+							expr_len += offs_until_binop_partner + 1;
 							break;
 						}
 						let first = &tts[tts.len() - (expr_len + 1) - offs_until_binop_partner];
