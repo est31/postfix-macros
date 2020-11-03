@@ -139,6 +139,27 @@ postfix_macros! {
 	}
 }
 
+/*
+// Test that things which belong into an if expr
+// but terminate a chained . expr work correcly.
+postfix_macros! {
+	#[test]
+	fn if_eq_belongs() {
+		// == terminates a . chain, but fits inside an if
+		if 42 == (10*4) { "hi" } else { "hello" }
+			.to_string()
+			.stringify_eq!(if 42 == (10*4) { "hi" } else { "hello" });
+	}
+	#[test]
+	fn if_eq_mul_belongs() {
+		// * terminates a . chain, but fits inside an if
+		if 42 == 10*4 { "hi" } else { "hello" }
+			.to_string()
+			.stringify_eq!(if 42 == 10*4 { "hi" } else { "hello" });
+	}
+}
+*/
+
 // Postfix macros inside if clauses
 postfix_macros! {
 	#[test]
