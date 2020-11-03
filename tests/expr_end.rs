@@ -1,5 +1,5 @@
 //! Tests for when the expression ends
-#![allow(unused_parens, unused_braces)]
+#![allow(unused_parens, unused_braces, unused_must_use)]
 
 use postfix_macros::postfix_macros;
 
@@ -199,5 +199,18 @@ postfix_macros! {
 		match &&&-0.stringify_eq!(&&&-0) { _ => () }
 		if hello.stringify_eq!(hello) {}
 		if true.stringify_eq!(true) {}
+	}
+}
+
+postfix_macros! {
+	#[test]
+	fn number_ops() {
+		0+7.stringify_eq!(7);
+		6-3.stringify_eq!(3);
+		0*10.stringify_eq!(10);
+		11^10.stringify_eq!(10);
+		11&18.stringify_eq!(18);
+		16|12.stringify_eq!(12);
+		17/14.stringify_eq!(14);
 	}
 }
