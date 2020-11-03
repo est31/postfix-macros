@@ -235,7 +235,8 @@ fn expression_length(tts :&[Tt]) -> usize {
 								}
 							},
 							_ => {
-								panic!("Hit unsupported case: {:?} {:?}", tt_before_that, tt_before);
+								panic!("Hit unsupported case: {:?} {:?}", tt_before_that.map(|v| v.to_string()),
+									tt_before.map(|v| v.to_string()));
 							},
 						}
 					}
