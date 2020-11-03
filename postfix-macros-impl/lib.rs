@@ -277,7 +277,6 @@ fn expression_length(tts :&[Tt]) -> usize {
 					':' | '?' | '!' => (),
 					// These all terminate expressions
 					'.' | '&' if p.spacing() == Spacing::Joint => break,
-					'&' if p.spacing() == Spacing::Joint => (),
 					',' | ';' | '+' | '/' | '%' | '=' | '<' | '>' | '|' | '^' => break,
 					// All of & * and - can be safely prepended to expressions in any number,
 					// However the symbols also exist in a binop context.
