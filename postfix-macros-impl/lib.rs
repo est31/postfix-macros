@@ -354,6 +354,10 @@ fn expression_length(tts :&[Tt]) -> usize {
 											expr_len += offs_until_binop_partner + 1;
 											break 'outer;
 										},
+										// The ! mark may occur in places like `&!&false`
+										// and has to be treated like any leading unary
+										// operator.
+										'!' |
 										// Continue the search
 										'&' | '*' | '-' => (),
 

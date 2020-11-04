@@ -204,7 +204,7 @@ postfix_macros! {
 
 postfix_macros! {
 	#[test]
-	fn number_ops() {
+	fn number_binops() {
 		0+7.stringify_eq!(7);
 		6-3.stringify_eq!(3);
 		0*10.stringify_eq!(10);
@@ -214,12 +214,17 @@ postfix_macros! {
 		17/14.stringify_eq!(14);
 	}
 	#[test]
-	fn bool_ops() {
+	fn bool_binops() {
 		false&true.stringify_eq!(true);
 		false&&true.stringify_eq!(true);
 		false|true.stringify_eq!(true);
 		false||true.stringify_eq!(true);
 		false^true.stringify_eq!(true);
+	}
+	#[test]
+	fn bool_unary_ops() {
 		!true.stringify_eq!(!true);
+		!&true.stringify_eq!(!&true);
+		&&!&true.stringify_eq!(&&!&true);
 	}
 }
