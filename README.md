@@ -72,6 +72,10 @@ and users are welcome to file reports about them. Relying on the
 non-Rust-specific behaviour is not supported by the semver guarantee of
 this crate.
 
+## MSRV
+
+The MSRV of this crate is `1.42.0`.
+
 ## TODO
 
 * Send a PR to rustc to syntactically permit postfix macros so that we can use an attribute macro.
