@@ -25,4 +25,7 @@ jobs:
     - name: Run the tests
       if: matrix.toolchain != '1.42.0'
       run: |
-        cargo test --all
+        RUSTFLAGS="-D warnings" cargo test --all
+    - name: Run cargo doc
+      run: |
+        cargo doc --all
