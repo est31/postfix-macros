@@ -36,7 +36,7 @@ use proc_macro::{TokenStream, TokenTree as Tt, Punct, Group, Spacing,
 pub fn postfix_macros(stream :TokenStream) -> TokenStream {
 	let mut vis = Visitor;
 	let res = vis.visit_stream(stream);
-	println!("{}", res);
+	//println!("{}", res);
 	res
 }
 
@@ -152,7 +152,7 @@ fn expression_length(tts :&[Tt]) -> usize {
 				// If we have {}. it might be an if, match or else block.
 				if group.delimiter() == Delimiter::Brace {
 					loop {
-						println!("GROUP SEARCH IS IN {}", tts[tts.len() - 1 - expr_len]);
+						//println!("GROUP SEARCH IS IN {}", tts[tts.len() - 1 - expr_len]);
 						// We are at the end, it was a {} block.
 						if expr_len + 1 >= tts.len() {
 							break;
