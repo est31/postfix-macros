@@ -213,4 +213,13 @@ postfix_macros! {
 		16|12.stringify_eq!(12);
 		17/14.stringify_eq!(14);
 	}
+	#[test]
+	fn bool_ops() {
+		false&true.stringify_eq!(true);
+		false&&true.stringify_eq!(true);
+		false|true.stringify_eq!(true);
+		false||true.stringify_eq!(true);
+		false^true.stringify_eq!(true);
+		!true.stringify_eq!(!true);
+	}
 }
