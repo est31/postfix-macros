@@ -214,6 +214,16 @@ postfix_macros! {
 		17/14.stringify_eq!(14);
 	}
 	#[test]
+	fn number_unary_ops() {
+		!42.stringify_eq!(!42);
+		!&43.stringify_eq!(!&43);
+		&-&!&-30.stringify_eq!(&-&!&-30);
+		(|| -> Option<bool> {
+			Some(true)?.stringify_eq!(Some(true)?);
+			None
+		}) ();
+	}
+	#[test]
 	fn bool_binops() {
 		false&true.stringify_eq!(true);
 		false&&true.stringify_eq!(true);
@@ -226,5 +236,9 @@ postfix_macros! {
 		!true.stringify_eq!(!true);
 		!&true.stringify_eq!(!&true);
 		&&!&true.stringify_eq!(&&!&true);
+		(|| -> Option<bool> {
+			Some(true)?.stringify_eq!(Some(true)?);
+			None
+		}) ();
 	}
 }
