@@ -20,12 +20,16 @@ jobs:
         toolchain: ${{ matrix.toolchain }}
         override: true
     - name: Run cargo check --all
+      env:
+        RUSTFLAGS: -D warnings
       run: |
         cargo check --all
     - name: Run the tests
       if: matrix.toolchain != '1.42.0'
+      env:
+        RUSTFLAGS: -D warnings
       run: |
-        RUSTFLAGS="-D warnings" cargo test --all
+         cargo test --all
     - name: Run cargo doc
       run: |
         cargo doc --all
