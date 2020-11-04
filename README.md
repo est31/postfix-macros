@@ -3,6 +3,8 @@
 Postfix macros on stable Rust, today.
 
 ```Rust
+arr.get(10).unwrap_or!(return Err(()));
+
 "hello world".println!();
 42.assert_ne!(4 + 2);
 
