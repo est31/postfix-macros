@@ -58,6 +58,20 @@ let v = something.unwrap_or!(some_expensive_fn_call(1, 2, 3));
 [RFC 2442]: https://github.com/rust-lang/rfcs/pull/2442
 [UFCS]: https://en.wikipedia.org/wiki/Uniform_Function_Call_Syntax
 
+## Footprint
+
+This crate has no dependencies beyond the one proc macro dependency,
+which itself has no dependencies. There is no reliance on the extremely
+slow to compile syn crate. The compile time is thus very short,
+and thus the crate has little footprint.
+
+This choice also has some downsides, as syn is actually quite a powerful
+tool, namely that the expression precedence is different in some places
+to the precedence of normal Rust. These differences are regarded as bugs
+and users are welcome to file reports about them. Relying on the
+non-Rust-specific behaviour is not supported by the semver guarantee of
+this crate.
+
 ## TODO
 
 * Send a PR to rustc to syntactically permit postfix macros so that we can use an attribute macro.
