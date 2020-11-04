@@ -52,6 +52,7 @@ postfix_macros! {
 	#[test]
 	fn colon() {
 		let _ :String = Default::default().stringify_eq!(Default::default());
+		std::iter::once(()).stringify_eq!(std::iter::once(()));
 		// TODO this doesn't work
 		//None::<()>.stringify_eq!(None::<()>);
 	}
