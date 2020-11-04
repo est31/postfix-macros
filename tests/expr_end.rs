@@ -213,6 +213,7 @@ postfix_macros! {
 		11&18.stringify_eq!(18);
 		16|12.stringify_eq!(12);
 		17/14.stringify_eq!(14);
+		13==19.stringify_eq!(19);
 	}
 	#[test]
 	fn number_unary_ops() {
@@ -231,6 +232,7 @@ postfix_macros! {
 		false|true.stringify_eq!(true);
 		false||true.stringify_eq!(true);
 		false^true.stringify_eq!(true);
+		false==true.stringify_eq!(true);
 	}
 	#[test]
 	fn bool_unary_ops() {
