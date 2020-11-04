@@ -12,6 +12,9 @@ val.iter()
 	.dbg!();
 ```
 
+WARNING: ALPHA QUALITY SOFTWARE. There are precedence bugs.
+Please verify manually during usage that you aren't affected by them.
+
 ## Explanation
 
 [RFC 2442] proposes to add postfix macros to the Rust language.
