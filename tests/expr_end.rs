@@ -218,8 +218,8 @@ postfix_macros! {
 		!42.stringify_eq!(!42);
 		!&43.stringify_eq!(!&43);
 		&-&!&-30.stringify_eq!(&-&!&-30);
-		(|| -> Option<bool> {
-			Some(true)?.stringify_eq!(Some(true)?);
+		(|| -> Option<u8> {
+			Some(13)?.stringify_eq!(Some(13)?);
 			None
 		}) ();
 	}
