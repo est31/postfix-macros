@@ -1,5 +1,8 @@
 # postfix-macros
 
+[![docs](https://docs.rs/postfix-macros/badge.svg)](https://docs.rs/crate/postfix-macros)
+[![crates.io](https://img.shields.io/crates/v/postfix-macros.svg)](https://crates.io/crates/postfix-macros)
+
 Postfix macros on stable Rust, today.
 
 ```Rust
