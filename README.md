@@ -84,11 +84,6 @@ this crate.
 
 The MSRV of this crate is `1.42.0`.
 
-## TODO
-
-* Send a PR to rustc to syntactically permit postfix macros so that we can use an attribute macro.
-  See [this PR](https://github.com/rust-lang/rust/pull/75857) for prior art.
-
 ## License
 [license]: #license
 
