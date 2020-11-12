@@ -6,15 +6,17 @@
 Postfix macros on stable Rust, today.
 
 ```Rust
-arr.get(10).unwrap_or!(return Err(()));
+postfix_macros! {
+	arr.get(10).unwrap_or!(return Err(()));
 
-"hello world".println!();
-42.assert_ne!(4 + 2);
+	"hello world".println!();
+	42.assert_ne!(4 + 2);
 
-val.iter()
-	.map(|v| v.1)
-	.find(|z| z.matches!(Custom::Enum(_) | Custom::EnumOther))
-	.dbg!();
+	val.iter()
+		.map(|v| v.1)
+		.find(|z| z.matches!(Custom::Enum(_) | Custom::EnumOther))
+		.dbg!();
+}
 ```
 
 WARNING: ALPHA QUALITY SOFTWARE. There are precedence bugs.
