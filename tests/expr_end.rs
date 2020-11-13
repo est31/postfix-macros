@@ -20,7 +20,7 @@ macro_rules! stringify_eq {
 
 postfix_macros! {
 	#[test]
-	fn prefix_operator_doesnt_end_expr() {
+	fn prefix_operator_ends_expr() {
 		let _ = &mut ().stringify_eq!(());
 		let _ = 0 -(0).stringify_eq!((0));
 		// && and & & are actually two different things
