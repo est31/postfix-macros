@@ -245,3 +245,11 @@ postfix_macros! {
 		}) ();
 	}
 }
+
+// Prefix and postfix
+postfix_macros! {
+	#[test]
+	fn prefix_postfix() {
+		println!("hi").stringify_eq!(println!("hi"));
+	}
+}
