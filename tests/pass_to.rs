@@ -13,11 +13,13 @@ The macro is a good test for postfix_macros
 anyways.
 */
 
+#![allow(unused_parens)]
+
 use postfix_macros::postfix_macros;
 
 postfix_macros! {
 	fn is_prime(v: &u32) -> bool {
-		!(2..*v).any(|w| *v % w == 0)
+		(!(2..*v).any(|w| *v % w == 0))
 			.pass_to! { return };
 	}
 	fn find_largest_prime(v: u32) -> Option<u32> {

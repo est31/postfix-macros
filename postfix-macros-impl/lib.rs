@@ -276,12 +276,13 @@ fn expression_length(tts :&[Tt]) -> usize {
 				if !last_was_punctuation && !last_was_group {
 					// two idents following another... must be `if <something>.foo!() { <stuff> }`
 					// or something like it.
-					// We need to special case the keyword mut though because `&mut` is usually
-					// prefixed to an expression.
-					let id_str = id.to_string();
-					if id_str != "mut" {
-						break;
-					}
+					break;
+				}
+
+				// &mut <something>.foo!() where <something> is punctuation or a group
+				let id_str = id.to_string();
+				if id_str == "mut" {
+					break;
 				}
 			},
 			Tt::Punct(p) => {
@@ -289,123 +290,43 @@ fn expression_length(tts :&[Tt]) -> usize {
 				match p.as_char() {
 					// No expression termination
 					'.' if p.spacing() == Spacing::Alone => (),
-					':' | '?' | '!' => (),
+					':' | '?' => (),
+					// Depending on the context, ! can either be a prefix
+					// operator or belong to a macro invocation.
+					// It can also appear in `!=`.
+					'!' => {
+						if last_was_punctuation {
+							// The ! is part of `!=`.
+							// Right now we panic, because the = should already
+							// terminate the expression, but in the future when
+							// we implement a mode with different precedence
+							// we might want to support this case.
+							panic!("! followed by punctuation");
+						} else {
+							if tts.len() - expr_len - 1 == 0 {
+								// Leading `!` means it's a prefix operator
+								break;
+							}
+							let tt_before = &tts[tts.len() - expr_len - 2];
+							if let Tt::Ident(_id) = tt_before {
+								// Macro invocation. Continue.
+
+								// TODO if the ident is a keyword like if or
+								// mut, it's obviously NOT a macro invocation
+								// and the ! is a prefix operator after all.
+							} else {
+								// `!` is a prefix operator
+								break;
+							}
+						}
+					},
 					// These all terminate expressions
 					'.' if p.spacing() == Spacing::Joint => break,
 					',' | ';' | '+' | '/' | '%' | '=' | '<' | '>' | '|' | '^' => break,
 					// All of & * and - can be safely prepended to expressions in any number,
-					// However the symbols also exist in a binop context.
-					// Only the leading symbol can be a binop, but what makes matters a bit
-					// more complicated is that `&&` is a valid binop as well.
-					'&' | '*' | '-' => {
-						// First, we find the end of our binop partner
-						let mut offs_until_binop_partner = 0;
-						for tt in tts[.. tts.len() - expr_len - 1].iter().rev() {
-							match tt {
-								Tt::Group(gr) => {
-									match gr.delimiter() {
-										// `{0} & 7;` is invalid and `{}` is.
-										// => all &*- are unary ops.
-										Delimiter::Brace => {
-											expr_len += offs_until_binop_partner + 1;
-											break 'outer;
-										}
-										// Both [] and () are other-parties/partners of binops
-										// e.g. `(4) & 7` is valid while `(()) & 7` isn't
-										// => this group belongs to our binop partner
-										Delimiter::Parenthesis | Delimiter::Bracket => {
-											break;
-										},
-
-										// IDK what to do here, let's just error
-										Delimiter::None => {
-											panic!("We don't support groups delimitered by none yet: {}", gr);
-										},
-									}
-								},
-
-								Tt::Ident(id) => {
-									let id_str = id.to_string();
-									match id_str.as_str() {
-										// `if` and `match` indicate that there is no binop
-										// but instead all prefix &*-s were unary ops.
-										"if" | "match" => {
-											expr_len += offs_until_binop_partner + 1;
-											break 'outer;
-										},
-										// `mut` is allowed part of a prefix
-										"mut" => (),
-										// If we encounter any other ident,
-										// it's part of the binop partner.
-										_ => break,
-									}
-								},
-								Tt::Punct(p) => {
-									match p.as_char() {
-										// ; either stands for the separator in array types/definitions,
-										// or it stands for a new statement. In both cases, unary op.
-										';' |
-										// , is used in tuples, argument lists, etc. Implies an unary op
-										',' |
-										// If we encounter =, it means an assignment OR comparison,
-										// both implying that all leading &*- were unary ops.
-										// (even though == is a binop, but that would be a binop at a higher level)
-										'=' => {
-											expr_len += offs_until_binop_partner + 1;
-											break 'outer;
-										},
-										// The ! mark may occur in places like `&!&false`
-										// and has to be treated like any leading unary
-										// operator.
-										'!' |
-										// Continue the search
-										'&' | '*' | '-' => (),
-
-										// We don't support special symbols yet
-										// TODO support more
-										_ => panic!("Binop partner search encountered punct '{}'", p),
-									}
-								},
-								Tt::Literal(_lit) => {
-									// Literals are binop partners
-									break;
-								},
-							}
-							offs_until_binop_partner += 1;
-						}
-						// If there is nothing beyond the one unary op in tts,
-						// no binop partner could be found,
-						// and we know that the sole punctuation
-						// was an unary op.
-						if offs_until_binop_partner == tts.len() - expr_len - 1 {
-							expr_len += offs_until_binop_partner + 1;
-							break;
-						}
-						let first = &tts[tts.len() - (expr_len + 1) - offs_until_binop_partner];
-						let second = &tts[tts.len() - (expr_len + 1) - offs_until_binop_partner + 1];
-						let mut binop_tts = 1;
-						match first {
-							Tt::Group(_gr) => unreachable!(),
-							// This can occur, as of current code only when we have code like `(mut hello.foo!())`,
-							// which would indicate a pattern context I guess... but for now we don't support
-							// our macro to be called in pattern contexts.
-							Tt::Ident(id) => panic!("Can't start a binop chain with ident '{}'", id),
-							Tt::Punct(p1) => {
-								if let Tt::Punct(p2) = second {
-									let is_binop_and_and = p1.spacing() == Spacing::Joint &&
-										p1.as_char() == '&' && p2.as_char() == '&';
-									if is_binop_and_and {
-										binop_tts = 2;
-									}
-								}
-							},
-							Tt::Literal(_lit) => unreachable!(),
-						}
-						// We finally know how many tt's the binop operator takes up (1 or 2).
-						// Set the length of the expression and emit the expression.
-						expr_len += 1 + offs_until_binop_partner - binop_tts;
-						break;
-					},
+					// however they have weaker precedence than postfix functions.
+					// So they just terminate the expression.
+					'&' | '*' | '-' => break,
 					c => panic!("Encountered unsupported punctuation {}", c),
 				}
 			},

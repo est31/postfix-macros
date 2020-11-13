@@ -21,19 +21,19 @@ macro_rules! stringify_eq {
 postfix_macros! {
 	#[test]
 	fn prefix_operator_doesnt_end_expr() {
-		let _ = &mut ().stringify_eq!(&mut ());
+		let _ = &mut ().stringify_eq!(());
 		let _ = 0 -(0).stringify_eq!((0));
 		// && and & & are actually two different things
-		let _ = &&(0).stringify_eq!(&& (0));
-		let _ = & &(0).stringify_eq!(& & (0));
-		let _ = (0, &().stringify_eq!(&()));
+		let _ = &&(0).stringify_eq!((0));
+		let _ = & &(0).stringify_eq!((0));
+		let _ = (0, &().stringify_eq!(()));
 		// TODO add more weird details of the expression parsing code
 	}
 	#[test]
 	fn prefix_operator_at_start() {
-		{ &mut ().stringify_eq!(&mut ()); }
-		{ &&&(0).stringify_eq!(&&&(0)); }
-		{ &().stringify_eq!(&()); }
+		{ &mut ().stringify_eq!(()); }
+		{ &&&(0).stringify_eq!((0)); }
+		{ &().stringify_eq!(()); }
 	}
 }
 
@@ -82,7 +82,7 @@ postfix_macros! {
 	#[test]
 	fn nested_fn_4() {
 		fn _foo() {}
-		&-0.stringify_eq!(&-0);
+		&-0.stringify_eq!(0);
 	}
 
 	#[test]
@@ -106,7 +106,7 @@ postfix_macros! {
 	#[test]
 	fn if_clause_4() {
 		if false {}
-		&-0.stringify_eq!(&-0);
+		&-0.stringify_eq!(0);
 	}
 }
 
@@ -153,20 +153,20 @@ postfix_macros! {
 }
 
 
-// Test that prefix operator search is enabled for match/if/etc.
+// Test that prefix operators don't extend the expr for match/if/etc.
 postfix_macros! {
 	#[test]
 	fn ref_match_belongs() {
 		"";
 		&match false { _ => "hi" }
 			.to_string()
-			.stringify_eq!(&match false { _ => "hi" }.to_string());
+			.stringify_eq!(match false { _ => "hi" }.to_string());
 	}
 	#[test]
 	fn multi_ref_match_belongs() {
 		&&&&&match false { _ => "hi" }
 			.to_string()
-			.stringify_eq!(&&&&&match false { _ => "hi" }.to_string());
+			.stringify_eq!(match false { _ => "hi" }.to_string());
 	}
 }
 
@@ -196,8 +196,8 @@ postfix_macros! {
 	#[test]
 	fn inside_if_clause() {
 		let hello = true;
-		if &false.stringify_eq!(&false) == &false {}
-		match &&&-0.stringify_eq!(&&&-0) { _ => () }
+		if &false.stringify_eq!(false) == &false {}
+		match &&&-0.stringify_eq!(0) { _ => () }
 		if hello.stringify_eq!(hello) {}
 		if true.stringify_eq!(true) {}
 	}
@@ -217,9 +217,9 @@ postfix_macros! {
 	}
 	#[test]
 	fn number_unary_ops() {
-		!42.stringify_eq!(!42);
-		!&43.stringify_eq!(!&43);
-		&-&!&-30.stringify_eq!(&-&!&-30);
+		!42.stringify_eq!(42);
+		!&43.stringify_eq!(43);
+		&-&!&-30.stringify_eq!(30);
 		(|| -> Option<u8> {
 			Some(13)?.stringify_eq!(Some(13)?);
 			None
@@ -236,9 +236,9 @@ postfix_macros! {
 	}
 	#[test]
 	fn bool_unary_ops() {
-		!true.stringify_eq!(!true);
-		!&true.stringify_eq!(!&true);
-		&&!&true.stringify_eq!(&&!&true);
+		!true.stringify_eq!(true);
+		!&true.stringify_eq!(true);
+		&&!&true.stringify_eq!(true);
 		(|| -> Option<bool> {
 			Some(true)?.stringify_eq!(Some(true)?);
 			None
