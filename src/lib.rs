@@ -194,14 +194,25 @@ for i in 1..10 {
 		.then!{ w += i * i }
 		.then_else!{ w += 1 };
 }
-assert_eq!(w, 181);
+assert_eq!(w, 72);
 # }
 ```
 */
 #[macro_export]
 macro_rules! then_else {
-	($v:tt, $($body:tt)*) => {
-		$v {
+	({ then! ( $cond:expr, $($if_body:tt)* ) }, $($body:tt)*) => {
+		if $cond {
+			$($if_body)*
+		}
+		else {
+			$($body)*
+		}
+	};
+	({ then! { $cond:expr, $($if_body:tt)* } }, $($body:tt)*) => {
+		if $cond {
+			$($if_body)*
+		}
+		else {
 			$($body)*
 		}
 	};
