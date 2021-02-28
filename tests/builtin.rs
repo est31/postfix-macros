@@ -17,16 +17,17 @@ postfix_macros! {
     #[test]
     fn builtin_match_or() {
         let mut check_match = false;
-        let mut check_default = true;
+        let mut check_default = false;
 
-        true.match_or!(true => check_match = true; check_default = false);
+        true.match_or!(true => check_match = true; check_default = true);
         assert!(check_match);
-        assert!(check_default);
+        assert!(!check_default);
 
+        check_match = false;
         check_default = false;
 
-        true.match_or!(false => check_match = false; check_default = true);
-        assert!(check_match);
+        false.match_or!(true => check_match = true; check_default = true);
+        assert!(!check_match);
         assert!(check_default);
     }
 }
@@ -48,16 +49,17 @@ postfix_macros! {
     #[test]
     fn builtin_then_else() {
         let mut check_then = false;
-        let mut check_else = true;
+        let mut check_else = false;
 
-        true.then!(check_then = true).then_else!(check_else = false);
+        true.then!(check_then = true).then_else!(check_else = true);
         assert!(check_then);
-        assert!(check_else);
+        assert!(!check_else);
 
+        check_then = false;
         check_else = false;
 
-        false.then!(check_then = false).then_else!(check_else = true);
-        assert!(check_then);
+        false.then!(check_then = true).then_else!(check_else = true);
+        assert!(!check_then);
         assert!(check_else);
     }
 }

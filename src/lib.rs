@@ -203,16 +203,14 @@ macro_rules! then_else {
 	({ then! ( $cond:expr, $($if_body:tt)* ) }, $($body:tt)*) => {
 		if $cond {
 			$($if_body)*
-		}
-		else {
+		} else {
 			$($body)*
 		}
 	};
 	({ then! { $cond:expr, $($if_body:tt)* } }, $($body:tt)*) => {
 		if $cond {
 			$($if_body)*
-		}
-		else {
+		} else {
 			$($body)*
 		}
 	};
